@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/helmet/v2"
 	"github.com/nesarptr/chat-app-go/config"
+	"github.com/nesarptr/chat-app-go/models"
 )
 
 func main() {
@@ -35,6 +36,8 @@ func init() {
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
+		db := config.GetDB()
+		db.AutoMigrate(&models.Client{}, &models.Text{})
 		fmt.Println("Database successfully connected!")
 	}
 }
