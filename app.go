@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/helmet/v2"
 	"github.com/nesarptr/chat-app-go/auth"
 	"github.com/nesarptr/chat-app-go/config"
+	"github.com/nesarptr/chat-app-go/controllers"
 	"github.com/nesarptr/chat-app-go/models"
 )
 
@@ -30,6 +31,7 @@ func main() {
 	app.Post("/signin", auth.SignIn)
 	protected := app.Group("/", auth.Protected()...)
 	protected.Get("/jwt", auth.Jwt)
+	protected.Get("/users", controllers.GetUsers)
 
 	fmt.Println(app.Listen(":" + port))
 }

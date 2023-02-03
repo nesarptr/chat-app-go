@@ -12,14 +12,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Input struct {
+	UserName string `json:"username" validate:"required,min=3,max=32"`
+	Password string `json:"password" validate:"required,min=6"`
+}
+
 func SignUp(c *fiber.Ctx) error {
-	user := new(models.Client)
-	if err := c.BodyParser(user); err != nil {
+	input := new(Input)
+	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
 
+	user := new(models.Client)
+	user.UserName = input.UserName
+	user.Password = input.Password
 	errors := utils.ValidateStruct(*user)
 
 	if errors != nil {
@@ -50,12 +58,7 @@ func SignUp(c *fiber.Ctx) error {
 }
 
 func SignIn(c *fiber.Ctx) error {
-	type loginInput struct {
-		UserName string `json:"username" validate:"required,min=3,max=32"`
-		Password string `json:"password" validate:"required,min=6"`
-	}
-
-	input := new(loginInput)
+	input := new(Input)
 
 	if err := c.BodyParser(input); err != nil {
 		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
