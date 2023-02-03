@@ -32,6 +32,7 @@ func main() {
 	protected := app.Group("/", auth.Protected()...)
 	protected.Get("/jwt", auth.Jwt)
 	protected.Get("/users", controllers.GetUsers)
+	protected.Get("/:from", controllers.GetMessages)
 
 	fmt.Println(app.Listen(":" + port))
 }
