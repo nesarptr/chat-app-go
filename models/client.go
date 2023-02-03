@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,11 @@ type Client struct {
 }
 
 func (c *Client) Create(db *gorm.DB) error {
+	hashedPw, err := bcrypt.GenerateFromPassword([]byte(c.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	c.Password = string(hashedPw)
 	if db.Create(c).Error != nil {
 		return fiber.ErrBadRequest
 	}

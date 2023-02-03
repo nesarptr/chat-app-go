@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/helmet/v2"
+	"github.com/nesarptr/chat-app-go/auth"
 	"github.com/nesarptr/chat-app-go/config"
 	"github.com/nesarptr/chat-app-go/models"
 )
@@ -25,9 +26,11 @@ func main() {
 	app.Use(helmet.New())
 	app.Use(compress.New())
 
-	app.Use("/", func(c *fiber.Ctx) error {
-		return fiber.ErrNotFound
-	})
+	app.Post("/signup", auth.SignUp)
+	app.Post("/signin", auth.SignIn)
+	app.Use(auth.Protected())
+	app.Get("/jwt", auth.Jwt)
+
 	fmt.Println(app.Listen(":" + port))
 }
 
