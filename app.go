@@ -13,4 +13,9 @@ func main() {
 	app.Use(cors.New())
 	app.Use(helmet.New())
 	app.Use(compress.New())
+
+
+	app.Use("/", func(c *fiber.Ctx) error {
+		return fiber.ErrNotFound
+	})
 }
