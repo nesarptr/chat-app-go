@@ -134,6 +134,12 @@ func Protected() []fiber.Handler {
 	}), func(c *fiber.Ctx) error {
 		user := c.Locals("user").(*jwt.Token)
 		claims := user.Claims.(jwt.MapClaims)
+		foundUser := new(models.Client)
+		db := config.GetDB()
+		db.First(foundUser, claims["id"].(float64))
+		if foundUser.ID == 0 {
+			return fiber.ErrUnauthorized
+		}
 		c.Locals("username", claims["username"].(string))
 		c.Locals("userId", claims["id"].(float64))
 		return c.Next()

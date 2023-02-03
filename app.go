@@ -28,8 +28,8 @@ func main() {
 
 	app.Post("/signup", auth.SignUp)
 	app.Post("/signin", auth.SignIn)
-	app.Use(auth.Protected())
-	app.Get("/jwt", auth.Jwt)
+	protected := app.Group("/", auth.Protected()...)
+	protected.Get("/jwt", auth.Jwt)
 
 	fmt.Println(app.Listen(":" + port))
 }
