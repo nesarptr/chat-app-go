@@ -10,7 +10,7 @@ func GetUsers(c *fiber.Ctx) error {
 	userId := c.Locals("userId")
 	db := config.GetDB()
 	users := make([]models.Client, 0)
-	db.Where("id != ?", userId).Find(&users)
+	db.Not("id = ?", userId).Find(&users)
 	return c.Status(fiber.StatusOK).JSON(users)
 }
 
@@ -25,6 +25,6 @@ func GetMessages(c *fiber.Ctx) error {
 	}
 	usernames := []string{username, from}
 	messages := make([]models.Text, 0)
-	db.Where("from IN ?", usernames).Or("to IN ?", usernames).Find(&messages)
+	db.Where("from IN ?", usernames).Or("to IN ?", usernames).Order("created_at desc").Find(&messages)
 	return c.Status(fiber.StatusOK).JSON(messages)
 }
