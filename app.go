@@ -7,10 +7,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/helmet/v2"
-	"github.com/nesarptr/chat-app-go/auth"
 	"github.com/nesarptr/chat-app-go/config"
-	"github.com/nesarptr/chat-app-go/controllers"
 	"github.com/nesarptr/chat-app-go/models"
+	"github.com/nesarptr/chat-app-go/routes"
 )
 
 func main() {
@@ -26,13 +25,8 @@ func main() {
 	app.Use(cors.New())
 	app.Use(helmet.New())
 	app.Use(compress.New())
+	routes.SetUpRoutes(app)
 
-	app.Post("/signup", auth.SignUp)
-	app.Post("/signin", auth.SignIn)
-	protected := app.Group("/", auth.Protected()...)
-	protected.Get("/jwt", auth.Jwt)
-	protected.Get("/users", controllers.GetUsers)
-	protected.Get("/:from", controllers.GetMessages)
 	fmt.Println(app.Listen(":" + port))
 }
 

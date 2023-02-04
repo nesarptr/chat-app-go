@@ -13,11 +13,11 @@ func GetUsers(c *fiber.Ctx) error {
 	users := make([]models.Client, 0)
 	db.Not("id = ?", userId).Find(&users)
 	messages := make([]models.Text, 0)
-	db.Where("from = ?", username).Or("to = ?", username).Order("created_at desc").Find(&messages)
-	for _, user := range users {
+	db.Where("sender_name = ?", username).Or("receiver_name = ?", username).Order("created_at desc").Find(&messages)
+	for i, user := range users {
 		for _, message := range messages {
-			if message.From == user.UserName || message.To == user.UserName {
-				user.LatestText = message.Body
+			if message.SenderName == user.UserName || message.ReceiverName == user.UserName {
+				users[i].LatestText = message.Body
 				break
 			}
 		}
@@ -36,6 +36,6 @@ func GetMessages(c *fiber.Ctx) error {
 	}
 	usernames := []string{username, from}
 	messages := make([]models.Text, 0)
-	db.Where("from IN ?", usernames).Or("to IN ?", usernames).Order("created_at desc").Find(&messages)
+	db.Where("sender_name IN ? AND receiver_name IN ?", usernames, usernames).Order("created_at desc").Find(&messages)
 	return c.Status(fiber.StatusOK).JSON(messages)
 }
